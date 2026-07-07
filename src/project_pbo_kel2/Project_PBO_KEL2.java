@@ -1,21 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package project_pbo_kel2;
 
-/**
- *
- * @author User
- */
+import Controller.LoginController;
+import Model.UserModel;
+import View.Login;
+
 public class Project_PBO_KEL2 {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
-        // TODO code application logic here
+        // 1. Instansiasi Model
+        UserModel modelUser = new UserModel();
+        
+        // 2. Instansiasi View (Form Login)
+        Login formLogin = new Login();
+        
+        // 3. Hubungkan Model dan View menggunakan Controller
+        new LoginController(modelUser, formLogin);
+        
+        // 4. Tampilkan Form ke Layar
+        formLogin.setLocationRelativeTo(null); // Membuat form muncul pas di tengah layar
+        formLogin.setVisible(true);
     }
     
 }
