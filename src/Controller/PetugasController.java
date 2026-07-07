@@ -85,7 +85,7 @@ public class PetugasController extends BasicController {
         if (me.getSource() == frm.tabeldata) {
             int baris = frm.tabeldata.rowAtPoint(me.getPoint());
             idLaporanTerpilih = Integer.parseInt(
-                frm.tabeldata.getValueAt(baris, 0).toString()
+                frm.tabeldata.getValueAt(baris, 4).toString()
             );
         }
     }

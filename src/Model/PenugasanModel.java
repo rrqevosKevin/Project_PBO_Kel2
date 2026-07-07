@@ -51,12 +51,21 @@ public class PenugasanModel implements PenghapusData {
         this.catatan_tugas = catatan_tugas;
     }
     
+    public String getStatusLaporan() {
+    return statusLaporan;
+}
+
+    public void setStatusLaporan(String statusLaporan) {
+    this.statusLaporan = statusLaporan;
+}
     private int id_penugasan;
     private int id_laporan;
     private int id_petugas;
     private Date tanggal_tugas;
     private String catatan_tugas;
-    
+    private String statusLaporan;
+
+
     
     public boolean simpanPenugasan(PenugasanModel data) throws SQLException {
         PreparedStatement pstm = null;
@@ -118,4 +127,29 @@ public class PenugasanModel implements PenghapusData {
             return false;
         }
     }
+    
+        public List<PenugasanModel> tampilPenugasanDenganStatus() throws SQLException {
+        List<PenugasanModel> list = new ArrayList<>();
+        Connection conn = (Connection) Connector.configDB();
+        String sql = "SELECT p.*, l.status FROM penugasan p " +
+                     "JOIN laporan l ON p.id_laporan = l.id_laporan";
+        try {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                PenugasanModel tugas = new PenugasanModel();
+                tugas.setId_penugasan(rs.getInt("id_penugasan"));
+                tugas.setId_laporan(rs.getInt("id_laporan"));
+                tugas.setId_petugas(rs.getInt("id_petugas"));
+                tugas.setTanggal_tugas(rs.getDate("tanggal_tugas"));
+                tugas.setCatatan_tugas(rs.getString("catatan_tugas"));
+                tugas.setStatusLaporan(rs.getString("status"));
+                list.add(tugas);
+            }
+        } catch (SQLException e) {
+            System.err.println("Gagal Tampil Penugasan: " + e);
+        }
+        return list;
+    }
+    
 }

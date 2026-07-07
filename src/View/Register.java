@@ -56,10 +56,9 @@ public class Register extends javax.swing.JFrame {
             }
         });
 
-        txtPassword.setText("jPasswordField1");
-
         btnDaftar.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         btnDaftar.setText("Daftarkan Akun");
+        btnDaftar.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(0, 0, 0), 2, true));
         btnDaftar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnDaftarActionPerformed(evt);

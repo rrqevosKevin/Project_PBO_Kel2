@@ -12,11 +12,12 @@ import javax.swing.table.DefaultTableModel;
 public class LaporanController extends BasicController {
     private LaporanModel model;
     private UserBiasa frm;
-    private int idUserAktif = 1;
+    private int idUserAktif;
 
-    public LaporanController(LaporanModel model, UserBiasa frm) {
+    public LaporanController(LaporanModel model, UserBiasa frm, int idUser) {
         this.model = model;
         this.frm = frm;
+        this.idUserAktif = idUser;
 
         this.frm.btnKirim.addActionListener(this);
         this.frm.btnLogout.addActionListener(this);
@@ -32,6 +33,7 @@ public class LaporanController extends BasicController {
         tblModel.addColumn("Lokasi");
         tblModel.addColumn("Kerusakan");
         tblModel.addColumn("Status");
+        tblModel.addColumn("Tanggal Laporan");
 
         try {
             List<LaporanModel> list = model.tampilLaporan();
@@ -41,7 +43,8 @@ public class LaporanController extends BasicController {
                     laporan.getJudul(),
                     laporan.getLokasi(),
                     laporan.getJenis_kerusakan(),
-                    laporan.getStatus()
+                    laporan.getStatus(),
+                    laporan.getCreated_at()
                 });
             }
             frm.tabeldata.setModel(tblModel);
@@ -82,6 +85,6 @@ public class LaporanController extends BasicController {
         }
     }
 
-        @Override
-        public void mouseClicked(MouseEvent me) {}
+    @Override
+    public void mouseClicked(MouseEvent me) {}
 }

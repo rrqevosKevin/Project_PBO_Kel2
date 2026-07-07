@@ -2,6 +2,7 @@ package Controller;
 
 import Model.PenugasanModel;
 import Model.UserModel;
+import Model.LaporanModel;
 import View.Penugasan;
 import View.Admin;
 import View.Users;
@@ -16,6 +17,7 @@ public class AdmPenugasanController extends BasicController {
     private PenugasanModel model;
     private Penugasan frm;
     private int idPenugasanTerpilih = 0;
+    private int idLaporanTerkait = 0;
 
     public AdmPenugasanController(PenugasanModel model, Penugasan frm) {
         this.model = model;
@@ -37,16 +39,18 @@ public class AdmPenugasanController extends BasicController {
         tblModel.addColumn("ID Petugas");
         tblModel.addColumn("Tanggal");
         tblModel.addColumn("Catatan");
+        tblModel.addColumn("Status");  
 
         try {
-            List<PenugasanModel> list = model.tampilPenugasan();
+            List<PenugasanModel> list = model.tampilPenugasanDenganStatus();
             for (PenugasanModel tugas : list) {
                 tblModel.addRow(new Object[]{
                     tugas.getId_penugasan(),
                     tugas.getId_laporan(),
                     tugas.getId_petugas(),
                     tugas.getTanggal_tugas(),
-                    tugas.getCatatan_tugas()
+                    tugas.getCatatan_tugas(),
+                    tugas.getStatusLaporan()
                 });
             }
             frm.tabeldata.setModel(tblModel);
@@ -67,9 +71,13 @@ public class AdmPenugasanController extends BasicController {
             if (konfirmasi == JOptionPane.YES_OPTION) {
                 try {
                     if (model.hapusData(idPenugasanTerpilih)) {
+                        LaporanModel lapModel = new LaporanModel();
+                        lapModel.updateStatus(idLaporanTerkait, "Menunggu");
+                        
                         JOptionPane.showMessageDialog(null, "Penugasan berhasil dihapus!");
                         TampilDataPenugasan();
                         idPenugasanTerpilih = 0;
+                        idLaporanTerkait = 0;
                     }
                 } catch (SQLException e) {
                     JOptionPane.showMessageDialog(null, "Gagal Hapus Penugasan: " + e.getMessage());
@@ -95,9 +103,8 @@ public class AdmPenugasanController extends BasicController {
     public void mouseClicked(MouseEvent me) {
         if (me.getSource() == frm.tabeldata) {
             int baris = frm.tabeldata.rowAtPoint(me.getPoint());
-            idPenugasanTerpilih = Integer.parseInt(
-                frm.tabeldata.getValueAt(baris, 0).toString()
-            );
+            idPenugasanTerpilih = Integer.parseInt(frm.tabeldata.getValueAt(baris, 0).toString());
+            idLaporanTerkait = Integer.parseInt(frm.tabeldata.getValueAt(baris, 1).toString());
         }
     }
 }

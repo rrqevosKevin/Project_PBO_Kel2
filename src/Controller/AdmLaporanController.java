@@ -43,6 +43,7 @@ public class AdmLaporanController extends BasicController {
         tblModel.addColumn("Judul");
         tblModel.addColumn("Lokasi");
         tblModel.addColumn("Kerusakan");
+        tblModel.addColumn("Tanggal Laporan");
 
         try {
             List<LaporanModel> list = laporanModel.tampilLaporan();
@@ -55,7 +56,8 @@ public class AdmLaporanController extends BasicController {
                         laporan.getId_user(),
                         laporan.getJudul(),
                         laporan.getLokasi(),
-                        laporan.getJenis_kerusakan()
+                        laporan.getJenis_kerusakan(),
+                        laporan.getCreated_at()
                     });
                 }
             }
@@ -97,7 +99,7 @@ public class AdmLaporanController extends BasicController {
             dataTugas.setId_laporan(idLaporanTerpilih);
             dataTugas.setId_petugas(idPetugas);
             dataTugas.setTanggal_tugas(new Date(System.currentTimeMillis()));
-            dataTugas.setCatatan_tugas("Menunggu tindakan petugas");
+            dataTugas.setCatatan_tugas("Proses");
 
             try {
                 if (penugasanModel.simpanPenugasan(dataTugas)) {
