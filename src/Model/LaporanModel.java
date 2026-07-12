@@ -6,10 +6,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import java.sql.Timestamp;
 
 public class LaporanModel implements PenghapusData {
+
+    private int id_laporan;
+    private int id_user;
+    private String judul;
+    private String lokasi;
+    private String deskripsi;
+    private String jenis_kerusakan;
+    private String status;
+    private Timestamp created_at;
 
     public int getId_laporan() {
         return id_laporan;
@@ -74,23 +82,12 @@ public class LaporanModel implements PenghapusData {
     public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
     }
-    
-    private int id_laporan;
-    private int id_user;
-    private String judul;
-    private String lokasi;
-    private String deskripsi;
-    private String jenis_kerusakan;
-    private String status;
-    private Timestamp created_at;
-    
+
     public boolean simpanLaporan(LaporanModel data) throws SQLException {
-        PreparedStatement pstm = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "INSERT INTO laporan (id_user, judul, lokasi, deskripsi, jenis_kerusakan) VALUES (?, ?, ?, ?, ?)";
-        
         try {
-            pstm = conn.prepareStatement(sql);
+            PreparedStatement pstm = conn.prepareStatement(sql);
             pstm.setInt(1, data.getId_user());
             pstm.setString(2, data.getJudul());
             pstm.setString(3, data.getLokasi());
@@ -106,15 +103,11 @@ public class LaporanModel implements PenghapusData {
 
     public List<LaporanModel> tampilLaporan() throws SQLException {
         List<LaporanModel> list = new ArrayList<>();
-        PreparedStatement pstm = null;
-        ResultSet rs = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "SELECT * FROM laporan";
-        
         try {
-            pstm = conn.prepareStatement(sql);
-            rs = pstm.executeQuery();
-            
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 LaporanModel laporan = new LaporanModel();
                 laporan.setId_laporan(rs.getInt("id_laporan"));
@@ -133,13 +126,37 @@ public class LaporanModel implements PenghapusData {
         return list;
     }
 
+    public List<LaporanModel> tampilLaporanByUser(int id_user) throws SQLException {
+        List<LaporanModel> list = new ArrayList<>();
+        Connection conn = (Connection) Connector.configDB();
+        String sql = "SELECT * FROM laporan WHERE id_user = ?";
+        try {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setInt(1, id_user);
+            ResultSet rs = pstm.executeQuery();
+            while (rs.next()) {
+                LaporanModel laporan = new LaporanModel();
+                laporan.setId_laporan(rs.getInt("id_laporan"));
+                laporan.setId_user(rs.getInt("id_user"));
+                laporan.setJudul(rs.getString("judul"));
+                laporan.setLokasi(rs.getString("lokasi"));
+                laporan.setDeskripsi(rs.getString("deskripsi"));
+                laporan.setJenis_kerusakan(rs.getString("jenis_kerusakan"));
+                laporan.setStatus(rs.getString("status"));
+                laporan.setCreated_at(rs.getTimestamp("created_at"));
+                list.add(laporan);
+            }
+        } catch (HeadlessException | SQLException e) {
+            System.err.println("Gagal Tampil Laporan User: " + e);
+        }
+        return list;
+    }
+
     public boolean updateStatus(int id_laporan, String status) throws SQLException {
-        PreparedStatement pstm = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "UPDATE laporan SET status = ? WHERE id_laporan = ?";
-        
         try {
-            pstm = conn.prepareStatement(sql);
+            PreparedStatement pstm = conn.prepareStatement(sql);
             pstm.setString(1, status);
             pstm.setInt(2, id_laporan);
             pstm.executeUpdate();
@@ -151,12 +168,10 @@ public class LaporanModel implements PenghapusData {
     }
 
     public boolean hapusData(int id_laporan) throws SQLException {
-        PreparedStatement pstm = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "DELETE FROM laporan WHERE id_laporan = ?";
-        
         try {
-            pstm = conn.prepareStatement(sql);
+            PreparedStatement pstm = conn.prepareStatement(sql);
             pstm.setInt(1, id_laporan);
             pstm.executeUpdate();
             return true;

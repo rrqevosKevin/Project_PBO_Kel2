@@ -6,10 +6,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.JOptionPane;
 import java.sql.Date;
 
 public class PenugasanModel implements PenghapusData {
+
+    private int id_penugasan;
+    private int id_laporan;
+    private int id_petugas;
+    private Date tanggal_tugas;
+    private String catatan_tugas;
+    private String statusLaporan;
+    private String namaPetugas;
 
     public int getId_penugasan() {
         return id_penugasan;
@@ -50,30 +57,28 @@ public class PenugasanModel implements PenghapusData {
     public void setCatatan_tugas(String catatan_tugas) {
         this.catatan_tugas = catatan_tugas;
     }
-    
+
     public String getStatusLaporan() {
-    return statusLaporan;
-}
+        return statusLaporan;
+    }
 
     public void setStatusLaporan(String statusLaporan) {
-    this.statusLaporan = statusLaporan;
-}
-    private int id_penugasan;
-    private int id_laporan;
-    private int id_petugas;
-    private Date tanggal_tugas;
-    private String catatan_tugas;
-    private String statusLaporan;
+        this.statusLaporan = statusLaporan;
+    }
 
+    public String getNamaPetugas() {
+        return namaPetugas;
+    }
 
-    
+    public void setNamaPetugas(String namaPetugas) {
+        this.namaPetugas = namaPetugas;
+    }
+
     public boolean simpanPenugasan(PenugasanModel data) throws SQLException {
-        PreparedStatement pstm = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "INSERT INTO penugasan (id_laporan, id_petugas, tanggal_tugas, catatan_tugas) VALUES (?, ?, ?, ?)";
-        
         try {
-            pstm = conn.prepareStatement(sql);
+            PreparedStatement pstm = conn.prepareStatement(sql);
             pstm.setInt(1, data.getId_laporan());
             pstm.setInt(2, data.getId_petugas());
             pstm.setDate(3, data.getTanggal_tugas());
@@ -88,15 +93,11 @@ public class PenugasanModel implements PenghapusData {
 
     public List<PenugasanModel> tampilPenugasan() throws SQLException {
         List<PenugasanModel> list = new ArrayList<>();
-        PreparedStatement pstm = null;
-        ResultSet rs = null;
         Connection conn = (Connection) Connector.configDB();
         String sql = "SELECT * FROM penugasan";
-        
         try {
-            pstm = conn.prepareStatement(sql);
-            rs = pstm.executeQuery();
-            
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            ResultSet rs = pstm.executeQuery();
             while (rs.next()) {
                 PenugasanModel penugasan = new PenugasanModel();
                 penugasan.setId_penugasan(rs.getInt("id_penugasan"));
@@ -112,26 +113,11 @@ public class PenugasanModel implements PenghapusData {
         return list;
     }
 
-    public boolean hapusData(int id_penugasan) throws SQLException {
-        PreparedStatement pstm = null;
-        Connection conn = (Connection) Connector.configDB();
-        String sql = "DELETE FROM penugasan WHERE id_penugasan = ?";
-        
-        try {
-            pstm = conn.prepareStatement(sql);
-            pstm.setInt(1, id_penugasan);
-            pstm.executeUpdate();
-            return true;
-        } catch (HeadlessException | SQLException e) {
-            System.err.println("Gagal Hapus Penugasan: " + e);
-            return false;
-        }
-    }
-    
-        public List<PenugasanModel> tampilPenugasanDenganStatus() throws SQLException {
+    public List<PenugasanModel> tampilPenugasanDenganNama() throws SQLException {
         List<PenugasanModel> list = new ArrayList<>();
         Connection conn = (Connection) Connector.configDB();
-        String sql = "SELECT p.*, l.status FROM penugasan p " +
+        String sql = "SELECT p.*, u.username, l.status FROM penugasan p " +
+                     "JOIN users u ON p.id_petugas = u.id_user " +
                      "JOIN laporan l ON p.id_laporan = l.id_laporan";
         try {
             PreparedStatement pstm = conn.prepareStatement(sql);
@@ -140,9 +126,9 @@ public class PenugasanModel implements PenghapusData {
                 PenugasanModel tugas = new PenugasanModel();
                 tugas.setId_penugasan(rs.getInt("id_penugasan"));
                 tugas.setId_laporan(rs.getInt("id_laporan"));
-                tugas.setId_petugas(rs.getInt("id_petugas"));
                 tugas.setTanggal_tugas(rs.getDate("tanggal_tugas"));
                 tugas.setCatatan_tugas(rs.getString("catatan_tugas"));
+                tugas.setNamaPetugas(rs.getString("username"));
                 tugas.setStatusLaporan(rs.getString("status"));
                 list.add(tugas);
             }
@@ -151,5 +137,18 @@ public class PenugasanModel implements PenghapusData {
         }
         return list;
     }
-    
+
+    public boolean hapusData(int id_penugasan) throws SQLException {
+        Connection conn = (Connection) Connector.configDB();
+        String sql = "DELETE FROM penugasan WHERE id_penugasan = ?";
+        try {
+            PreparedStatement pstm = conn.prepareStatement(sql);
+            pstm.setInt(1, id_penugasan);
+            pstm.executeUpdate();
+            return true;
+        } catch (HeadlessException | SQLException e) {
+            System.err.println("Gagal Hapus Penugasan: " + e);
+            return false;
+        }
+    }
 }

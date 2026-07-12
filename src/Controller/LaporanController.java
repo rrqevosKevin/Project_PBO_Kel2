@@ -14,10 +14,10 @@ public class LaporanController extends BasicController {
     private UserBiasa frm;
     private int idUserAktif;
 
-    public LaporanController(LaporanModel model, UserBiasa frm, int idUser) {
+    public LaporanController(LaporanModel model, UserBiasa frm, int idUserAktif) {
         this.model = model;
         this.frm = frm;
-        this.idUserAktif = idUser;
+        this.idUserAktif = idUserAktif;
 
         this.frm.btnKirim.addActionListener(this);
         this.frm.btnLogout.addActionListener(this);
@@ -36,7 +36,7 @@ public class LaporanController extends BasicController {
         tblModel.addColumn("Tanggal Laporan");
 
         try {
-            List<LaporanModel> list = model.tampilLaporan();
+            List<LaporanModel> list = model.tampilLaporanByUser(idUserAktif);
             for (LaporanModel laporan : list) {
                 tblModel.addRow(new Object[]{
                     laporan.getId_laporan(),

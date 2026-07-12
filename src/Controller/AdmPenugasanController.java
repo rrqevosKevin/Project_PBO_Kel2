@@ -6,6 +6,7 @@ import Model.LaporanModel;
 import View.Penugasan;
 import View.Admin;
 import View.Users;
+import View.History;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -27,6 +28,7 @@ public class AdmPenugasanController extends BasicController {
         this.frm.tabeldata.addMouseListener(this);
         this.frm.nav1.addActionListener(this);
         this.frm.nav2.addActionListener(this);
+        this.frm.nav3.addActionListener(this);
         this.frm.btnLogout.addActionListener(this);
 
         TampilDataPenugasan();
@@ -36,18 +38,18 @@ public class AdmPenugasanController extends BasicController {
         DefaultTableModel tblModel = new DefaultTableModel();
         tblModel.addColumn("ID Penugasan");
         tblModel.addColumn("ID Laporan");
-        tblModel.addColumn("ID Petugas");
+        tblModel.addColumn("Nama Petugas");
         tblModel.addColumn("Tanggal");
         tblModel.addColumn("Catatan");
-        tblModel.addColumn("Status");  
+        tblModel.addColumn("Status");
 
         try {
-            List<PenugasanModel> list = model.tampilPenugasanDenganStatus();
+            List<PenugasanModel> list = model.tampilPenugasanDenganNama();
             for (PenugasanModel tugas : list) {
                 tblModel.addRow(new Object[]{
                     tugas.getId_penugasan(),
                     tugas.getId_laporan(),
-                    tugas.getId_petugas(),
+                    tugas.getNamaPetugas(),
                     tugas.getTanggal_tugas(),
                     tugas.getCatatan_tugas(),
                     tugas.getStatusLaporan()
@@ -73,7 +75,6 @@ public class AdmPenugasanController extends BasicController {
                     if (model.hapusData(idPenugasanTerpilih)) {
                         LaporanModel lapModel = new LaporanModel();
                         lapModel.updateStatus(idLaporanTerkait, "Menunggu");
-                        
                         JOptionPane.showMessageDialog(null, "Penugasan berhasil dihapus!");
                         TampilDataPenugasan();
                         idPenugasanTerpilih = 0;
@@ -96,6 +97,11 @@ public class AdmPenugasanController extends BasicController {
             Users userView = new Users();
             new AdmUserController(new UserModel(), userView);
             PindahHalaman(userView, frm);
+
+        } else if (ae.getSource() == frm.nav3) {
+            History historyView = new History();
+            new HistoryController(new LaporanModel(), historyView);
+            PindahHalaman(historyView, frm);
         }
     }
 
@@ -103,8 +109,12 @@ public class AdmPenugasanController extends BasicController {
     public void mouseClicked(MouseEvent me) {
         if (me.getSource() == frm.tabeldata) {
             int baris = frm.tabeldata.rowAtPoint(me.getPoint());
-            idPenugasanTerpilih = Integer.parseInt(frm.tabeldata.getValueAt(baris, 0).toString());
-            idLaporanTerkait = Integer.parseInt(frm.tabeldata.getValueAt(baris, 1).toString());
+            idPenugasanTerpilih = Integer.parseInt(
+                frm.tabeldata.getValueAt(baris, 0).toString()
+            );
+            idLaporanTerkait = Integer.parseInt(
+                frm.tabeldata.getValueAt(baris, 1).toString()
+            );
         }
     }
 }

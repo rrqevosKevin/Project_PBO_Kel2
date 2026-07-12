@@ -2,9 +2,11 @@ package Controller;
 
 import Model.UserModel;
 import Model.PenugasanModel;
+import Model.LaporanModel;
 import View.Users;
 import View.Admin;
 import View.Penugasan;
+import View.History;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
@@ -22,12 +24,15 @@ public class AdmUserController extends BasicController {
         this.frm = frm;
 
         this.frm.btnHapus.addActionListener(this);
+        this.frm.combo.addActionListener(this);
         this.frm.tabeldata.addMouseListener(this);
         this.frm.nav1.addActionListener(this);
         this.frm.nav2.addActionListener(this);
+        this.frm.nav3.addActionListener(this);
         this.frm.btnLogout.addActionListener(this);
 
         TampilDataUser();
+        IsiComboRole();
     }
 
     public void TampilDataUser() {
@@ -53,6 +58,13 @@ public class AdmUserController extends BasicController {
         }
     }
 
+    public void IsiComboRole() {
+        frm.combo.removeAllItems();
+        frm.combo.addItem("masyarakat");
+        frm.combo.addItem("petugas");
+        frm.combo.addItem("admin");
+    }
+
     @Override
     public void actionPerformed(ActionEvent ae) {
         if (ae.getSource() == frm.btnHapus) {
@@ -74,6 +86,25 @@ public class AdmUserController extends BasicController {
                 }
             }
 
+        } else if (ae.getSource() == frm.combo) {
+            if (idTerpilih == 0) {
+                return;
+            }
+            String roleBaru = frm.combo.getSelectedItem().toString();
+            int konfirmasi = JOptionPane.showConfirmDialog(null,
+                "Ubah role user ini menjadi " + roleBaru + "?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
+            if (konfirmasi == JOptionPane.YES_OPTION) {
+                try {
+                    if (model.updateRole(idTerpilih, roleBaru)) {
+                        JOptionPane.showMessageDialog(null, "Role berhasil diubah!");
+                        TampilDataUser();
+                        idTerpilih = 0;
+                    }
+                } catch (SQLException e) {
+                    JOptionPane.showMessageDialog(null, "Gagal Ubah Role: " + e.getMessage());
+                }
+            }
+
         } else if (ae.getSource() == frm.btnLogout) {
             Logout(frm);
 
@@ -86,6 +117,11 @@ public class AdmUserController extends BasicController {
             Penugasan penugasanView = new Penugasan();
             new AdmPenugasanController(new PenugasanModel(), penugasanView);
             PindahHalaman(penugasanView, frm);
+
+        } else if (ae.getSource() == frm.nav3) {
+            History historyView = new History();
+            new HistoryController(new LaporanModel(), historyView);
+            PindahHalaman(historyView, frm);
         }
     }
 

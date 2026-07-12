@@ -54,7 +54,7 @@ public class LoginController implements ActionListener {
                     } else {
                         UserBiasa userBiasaView = new UserBiasa();
                         LaporanModel laporanModel = new LaporanModel();
-                        new LaporanController(laporanModel, userBiasaView, userLogin.getId_user());
+                        new LaporanController(laporanModel, userBiasaView, userLogin.getId_user()); // ← kirim id
                         userBiasaView.setLocationRelativeTo(null);
                         userBiasaView.setVisible(true);
                     }

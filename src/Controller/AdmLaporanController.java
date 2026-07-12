@@ -6,6 +6,7 @@ import Model.UserModel;
 import View.Admin;
 import View.Users;
 import View.Penugasan;
+import View.History;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.sql.Date;
@@ -30,6 +31,7 @@ public class AdmLaporanController extends BasicController {
         this.frm.tabeldata.addMouseListener(this);
         this.frm.nav1.addActionListener(this);
         this.frm.nav2.addActionListener(this);
+        this.frm.nav3.addActionListener(this);
         this.frm.btnLogout.addActionListener(this);
 
         TampilDataLaporan();
@@ -143,6 +145,11 @@ public class AdmLaporanController extends BasicController {
             Users userView = new Users();
             new AdmUserController(new UserModel(), userView);
             PindahHalaman(userView, frm);
+
+        } else if (ae.getSource() == frm.nav3) {
+            History historyView = new History();
+            new HistoryController(new LaporanModel(), historyView);
+            PindahHalaman(historyView, frm);
         }
     }
 
